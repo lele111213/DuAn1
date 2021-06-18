@@ -1,0 +1,8 @@
+{% extends "Web/base.html" %}
+{% block content %}
+    {{ name|json_script:"username"}}
+    <div id="app">
+        [[ message ]]
+    </div>
+    <script src="/static/Web/js/login.js"></script>
+{% endblock %}

@@ -1,0 +1,38 @@
+.home{
+    border: 1px solid #000;
+    border-radius: 5px;
+    display: inline-block;
+    background-color: white;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 60px;
+    text-align: center;
+}
+.home a {
+    display: inline-block;
+}
+.home h1{
+    color: red;
+}
+.home a{
+    margin-top: 3rem;
+    padding: 20px;
+    border: 1px solid black;
+    color: black;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.home a:hover{
+    background-color: #ccc;
+}
+.content .home-text{
+    font-weight: bold;
+    padding-top: 3rem;
+    font-size: 24px;
+    text-shadow: 0 0 7px black;
+    color: black;
+}
