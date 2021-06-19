@@ -1,8 +1,44 @@
-{% extends "Web/base.html" %}
-{% block content %}
-    {{ name|json_script:"username"}}
-    <div id="app">
-        [[ message ]]
+<!DOCTYPE>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+    <!-- vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-cookies@1.7.4/vue-cookies.min.js"></script>
+    <!-- end vue -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/Web/css/form.css">
+<head>
+<body>
+    <h4 style="color: #428de7cf; text-align: center;">Đăng nhập</h4>
+    <div class="d-flex justify-content-center text-center" id=formLogin>
+        <form @submit.prevent="submitLogin" autocomplete="off" class="col-4" action="" method="post">
+            <div style="height: 2rem;">
+                <span v-if="errored" class="form-message">[[ error_message ]]</span>
+                <span v-else-if="success" class="form-message" style="color: green">[[ success_message ]]</span>
+            </div>
+            <div class="form-dangnhap">
+                <div class="p-2">
+                    <div class="form-floating mb-2 mt-3">
+                        <input v-model="form.TenDangNhap" v-on:focus="onFocus" :disabled="success" class="form-control" id="TenDangNhap" placeholder="Tên đăng nhập" type="text" name="TenDangNhap" value="">
+                        <label for="TenDangNhap">Tên đăng nhập</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input v-model="form.MatKhau" v-on:focus="onFocus" :disabled="success" class="form-control" id="MatKhau" placeholder="Mật khẩu" type="password" name="MatKhau" value="">
+                        <label for="MatKhau">Mật khẩu</label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary p-0 p-1 mt-4 mb-1" :disabled="success" type="submit">Đăng nhập</button>
+            <div class="d-flex justify-content-center align-items-center">
+                <a class="me-2" href="#">Quên mật khẩu?</a>
+                <a href="{% url 'register' %}">Chưa có tài khoản?</a>
+            </div>
+        </form>
     </div>
     <script src="/static/Web/js/login.js"></script>
-{% endblock %}
+</body>
+

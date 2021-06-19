@@ -23,10 +23,7 @@ a{
     background-color: black;
 }
 
-.navbar div{
-    display: inline-block;
-}
-.navbar a{
+.navbar > a, .right-nav .logged > a, .right-nav .unlogged a{
     line-height: 48px;
     color: white;
     padding: 0px 16px;
@@ -34,13 +31,41 @@ a{
     display: inline-block;
 
 }
-.navbar a:hover{
+.navbar a:hover, .right-nav .logged li:hover{
     background-color: #ccc;
+    color: black;
 }
 .navbar .right-nav{
+    position: relative;
     float: right;
 }
-
+.right-nav .logged a{
+    text-align: center;
+    min-width: 200px;
+    padding: 0 32px;
+}
+.right-nav .logged ul{
+    text-align: center;
+    line-height: 1.6;
+    width: 100%;
+    position: absolute;
+    list-style: none;
+    background-color: white;
+    box-shadow: 0 0 10px;
+    display: none;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+.right-nav .logged:hover ul{
+    display: block;
+    animation: fadeIn .5s;
+}
+.right-nav ul a{
+    display: block;
+    color: black;
+}
 
 /* content */
 .content{
