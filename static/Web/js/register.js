@@ -13,9 +13,9 @@ new Vue({
                 GioiTinh: ""
             },
             error_message: "",
+            errored: false,
             info: null,
             loading: true,
-            errored: false
         }
     },
 
@@ -43,7 +43,13 @@ new Vue({
                             }
                         )
                     .then(response => {
-                        this.info = response.data
+                        if(response.data.status){
+                            localStorage.success_message = response.data.message
+                            setTimeout(() => window.location.href = "http://localhost:8000/login", 1000);
+                        }else{
+                            this.errored = true
+                            this.error_message = response.data.message
+                        }
                     })
                     .catch(error => {
                         console.log(error)
@@ -51,7 +57,8 @@ new Vue({
                     })
                     .finally(() => this.loading = false)
             }
-            this.error_message = formIsValid ? "" : matKhauIsValid && !matKhau2IsValid ? "Nhập lại mật khẩu không chích xác!" : "Hãy nhập hết các trường!"
+            if(!this.errored)
+                this.error_message = formIsValid ? "" : matKhauIsValid && !matKhau2IsValid ? "Nhập lại mật khẩu không chích xác!" : "Hãy nhập hết các trường!"
         },
     }
 })

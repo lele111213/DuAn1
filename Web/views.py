@@ -1,7 +1,11 @@
+import json
+from json.encoder import JSONEncoder
 from django.http import response
 from django.http.response import HttpResponse, JsonResponse
 from django.middleware import csrf
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login as user_login, logout as user_logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -23,10 +27,17 @@ def register(request):
         csrf.get_token(request)
         return render(request, 'Web/register.html')
     if request.method == "POST":
-        context = {
-            'name': "lam lam",
-            'age': 18
-        }
+        data = json.loads(request.body)
+        if(data['username'] == "12"):
+            context = {
+                'message': "Đăng ký thành công!",
+                'status': True
+            }
+        else:
+            context = {
+                'message': "Đăng ký thất bại",
+                'status': False
+            }
         return JsonResponse(context)
 
 
@@ -36,19 +47,27 @@ def login(request):
         csrf.get_token(request)
         return render(request, 'Web/login.html')
     if request.method == "POST":
-        return JsonResponse({'message': "Đăng nhập thành công!"})
+        context = {
+            'message': "Tên tài khoản hoặc mật khẩu không chính xác!",
+            'status': False
+        }
+        data = json.loads(request.body)
+        user = authenticate(request, username=data['username'], password=data['password'])
+        if user is not None :
+            user_login(request, user)
+            context['message'] = "Đăng nhập thành công"
+            context['status'] = True
+        return JsonResponse(context)
 
 
 # logout
 def logout(request):
-    if request.method == "GET":
-        context = {
-            'name': "1333"
-        }
-        return render(request, 'Web/index.html', context)
+    user_logout(request)
+    return redirect('home')
 
 
 # user infomation
+@login_required
 def user_info(request):
     if request.method == "GET":
         context = {

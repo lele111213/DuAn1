@@ -8,13 +8,19 @@ new Vue({
                 MatKhau: null
             },
             error_message: "",
-            success_message: "",
             info: null,
             errored: false,
-            success: false
+            success: false,
+            success_message: ""
         }
     },
-
+    mounted(){
+        if (localStorage.success_message){
+            this.success = true
+            this.success_message = localStorage.success_message
+            setTimeout(()=>localStorage.success_message = "", 3000)
+        }
+    },
     methods: {
         submitLogin () {
             const tenDangNhapIsValid = !!this.form.TenDangNhap
@@ -36,13 +42,19 @@ new Vue({
                             }
                         )
                     .then(response => {
-                        this.success = true
-                        this.success_message = response.data.message
-                        setTimeout(() => window.location.href = "http://localhost:8000", 1000);
+                        if(response.data.status){
+                            this.success = true
+                            this.success_message = response.data.message
+                            setTimeout(() => window.location.href = "http://localhost:8000", 1000);
+                        }else{
+                            this.errored = true
+                            this.error_message = response.data.message
+                        }
                     })
                     .catch(error => {
                         console.log(error)
                         this.errored = true
+                        this.error_message = response.data.message
                     })
             }
             else{

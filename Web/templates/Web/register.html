@@ -18,7 +18,7 @@
     <div class="d-flex justify-content-center text-center" id=formRegister>
         <form  @submit.prevent="submitRegister" class="col-4" method="post">
             <div style="height: 2rem;">
-                <span class="form-message">[[ error_message ]]</span>
+                <span v-if="error_message" class="form-message">[[ error_message ]]</span>
             </div>
             [[ info ]]
             <div class="form-dangky">
