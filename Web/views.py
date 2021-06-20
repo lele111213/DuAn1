@@ -1,11 +1,14 @@
 import json
 from json.encoder import JSONEncoder
+from users.models import UserManager
 from django.http import response
 from django.http.response import HttpResponse, JsonResponse
 from django.middleware import csrf
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as user_login, logout as user_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Create your views here.
 
@@ -28,14 +31,15 @@ def register(request):
         return render(request, 'Web/register.html')
     if request.method == "POST":
         data = json.loads(request.body)
-        if(data['username'] == "12"):
+        try:
+            UserManager.create_user(User.objects, username=data['username'],fullname=data['fullname'],phonenumber=data['phonenumber'],addressId=data['addressId'], addressName=data['addressName'], gender=data['gender'], password=data['password'])
             context = {
                 'message': "Đăng ký thành công!",
                 'status': True
             }
-        else:
+        except:
             context = {
-                'message': "Đăng ký thất bại",
+                'message': "Tên đăng nhập đã được sử dụng!",
                 'status': False
             }
         return JsonResponse(context)

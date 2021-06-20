@@ -7,10 +7,11 @@ new Vue({
                 TenDangNhap: "",
                 HoTen: "",
                 SoDT: "",
+                IdDiaChi: null,
+                NameDiaChi: "",
+                GioiTinh: "",
                 MatKhau: "",
-                MatKhau2: "",
-                DiaChi: "",
-                GioiTinh: ""
+                MatKhau2: ""
             },
             error_message: "",
             errored: false,
@@ -18,7 +19,11 @@ new Vue({
             loading: true,
         }
     },
-
+    updated(){
+        if(this.form.IdDiaChi){
+            this.form.NameDiaChi = document.querySelector('option[value ="'+this.form.IdDiaChi+'"]').innerText
+        }
+    },
     methods: {
         submitRegister () {
             const tenDangNhapIsValid = !!this.form.TenDangNhap
@@ -26,7 +31,7 @@ new Vue({
             const matKhau2IsValid = this.form.MatKhau2 == this.form.MatKhau
             const hoTenIsValid = !!this.form.HoTen
             const soDienIsThoaiValid = !!this.form.SoDT
-            const diaChiIsValid = !!this.form.DiaChi
+            const diaChiIsValid = !!this.form.IdDiaChi
             const gioiTinhIsValid = !!this.form.GioiTinh
 
             const formIsValid = tenDangNhapIsValid && matKhauIsValid && matKhau2IsValid && hoTenIsValid && soDienIsThoaiValid && diaChiIsValid && gioiTinhIsValid
@@ -36,7 +41,12 @@ new Vue({
                             'http://localhost:8000/register/',
                             {
                                 username: this.form.TenDangNhap,
-                                password: this.form.MatKhau
+                                password: this.form.MatKhau,
+                                fullname: this.form.HoTen,
+                                gender: this.form.GioiTinh,
+                                addressId: this.form.IdDiaChi,
+                                addressName: this.form.NameDiaChi,
+                                phonenumber: this.form.SoDT
                             },
                             {
                                 headers: {'X-CSRFToken': window.$cookies.get('csrftoken')}
@@ -45,7 +55,7 @@ new Vue({
                     .then(response => {
                         if(response.data.status){
                             localStorage.success_message = response.data.message
-                            setTimeout(() => window.location.href = "http://localhost:8000/login", 1000);
+                            setTimeout(() => window.location.href = "http://localhost:8000/login", 500);
                         }else{
                             this.errored = true
                             this.error_message = response.data.message

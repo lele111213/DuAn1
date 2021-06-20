@@ -6,43 +6,57 @@ from django.db.models.expressions import F
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None, is_active=True, is_staff=False, is_admin=False):
+    
+    def create_user(self, username, password=None, fullname=None, is_active=True, is_staff=False, is_admin=False, phonenumber="", addressId=0, hieght=170, addressName="TP Hồ Chí Minh", gender="another", hobbies="", image="/images/default.jpg"):
+    
         """
-        Creates and saves a User with the given username and password.
+        Creates and saves a User.
         """
         if not username:
             raise ValueError('Users must have an username address')
         if not password:
             raise ValueError('User must have a password')
+        if not fullname:
+            raise ValueError('User must have full name')
         user_obj = self.model(
             username=self.normalize_email(username),
         )
 
         user_obj.set_password(password)
+        user_obj.fullname = fullname
+        user_obj.phonenumber = phonenumber
+        user_obj.addressId = addressId
+        user_obj.addressName = addressName
+        user_obj.gender = gender
+        user_obj.hieght = hieght
+        user_obj.hobbies = hobbies
+        user_obj.image = image
         user_obj.staff = is_staff
         user_obj.admin = is_admin
         user_obj.active = is_active
         user_obj.save(using=self._db)
         return user_obj
 
-    def create_staffuser(self, username, password):
+    def create_staffuser(self, username, fullname, password):
         """
         Creates and saves a staff user with the given username and password.
         """
         user = self.create_user(
             username,
             password=password,
+            fullname=fullname,
             is_staff=True
         )
         return user
 
-    def create_superuser(self, username, password):
+    def create_superuser(self, username, fullname, password):
         """
         Creates and saves a superuser with the given username and password.
         """
         user = self.create_user(
             username,
             password=password,
+            fullname=fullname,
             is_staff=True,
             is_admin=True
         )
@@ -50,7 +64,15 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    username = models.CharField(max_length=255,unique=True,verbose_name='username for login')
+    username = models.CharField(max_length=255,unique=True,verbose_name='username')
+    fullname = models.CharField(max_length=255)
+    phonenumber = models.CharField(max_length=15, blank=True)
+    addressId = models.IntegerField(blank=True, default=0)
+    addressName = models.CharField(max_length=255, blank=True, default="T.P Hồ Chí Minh")
+    gender = models.CharField(max_length=10, blank=True, default="another")
+    hieght = models.IntegerField(blank=True, default=170, verbose_name="Chiều cao (cm)")
+    hobbies = models.CharField(max_length=255, blank=True, default="")
+    image = models.ImageField(upload_to='images', default='/images/default.jpg', blank=True)
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
@@ -58,16 +80,16 @@ class User(AbstractBaseUser):
     # notice the absence of a "Password field", that is built in.
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = [] # Email & Password are required by default.
+    REQUIRED_FIELDS = ['fullname'] # username & Password are required by default.
 
     objects = UserManager()
 
     def get_full_name(self):
-        # The user is identified by their email address
-        return self.username
+        # The user is identified by their fullname
+        return self.fullname
 
     def get_short_name(self):
-        # The user is identified by their email address
+        # The user is identified by their username
         return self.username
 
     def __str__(self):
