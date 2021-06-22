@@ -75,10 +75,22 @@ def logout(request):
 @login_required(login_url='/login/?next=/user_info/')
 def user_info(request):
     if request.method == "GET":
-        context = {
-            'name': request.user.username
-        }
-        return render(request, 'Web/user_info.html', context)
+        return render(request, 'Web/user_info.html')
+    if request.methos == "POST":
+        if request.POST['view']:
+            select = {
+                    'title': "Thông tin tài khoản",
+                }
+            if request.GET['view']:
+                view = request.GET['view']
+                if view == 'lichsu':
+                    select = {
+                        'title': "Lịch sử ghép cặp",
+                    }
+            context = {
+                'select': select,
+            }
+            return JsonResponse(context)
 
 @login_required
 def get_user_info(request):
@@ -141,3 +153,17 @@ def update_user_image(request):
                 'message': 'success!'
             }
             return JsonResponse(context)
+
+@login_required
+def get_user_lichsu(request):
+    if request.method == "GET":
+        user = request.user
+        context = {
+            'user': {
+                'uimage' : user.image.url,
+                'ufullname': user.fullname,
+            },
+            'status': True,
+            'message': 'success!'
+        }
+        return JsonResponse(context)

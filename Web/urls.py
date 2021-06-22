@@ -16,5 +16,7 @@ urlpatterns = [
     path('api/get_user_info/', views.get_user_info, name='get_user_info'),
     path('api/update_user/', views.update_user, name='update_user'),
     path('api/update_user_image/', views.update_user_image, name='update_user_image'),
+    path('api/get_user_lichsu/', views.get_user_lichsu, name='get_user_lichsu'),
+    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
