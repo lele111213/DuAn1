@@ -1,22 +1,19 @@
 .home{
     border: 1px solid #000;
     border-radius: 5px;
-    display: inline-block;
     background-color: white;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    margin: 14px 27%;
     padding: 60px;
     text-align: center;
 }
-.home a {
+.home > a {
     display: inline-block;
 }
-.home h1{
+.home > h1{
     color: red;
 }
-.home a{
+.home > a{
     margin-top: 3rem;
     padding: 20px;
     border: 1px solid black;
@@ -26,7 +23,7 @@
     text-transform: uppercase;
     font-weight: bold;
 }
-.home a:hover{
+.home > a:hover{
     background-color: #ccc;
 }
 .content .home-text{
@@ -35,4 +32,110 @@
     font-size: 24px;
     text-shadow: 0 0 7px black;
     color: black;
+}
+
+.background-opacity{
+    position: fixed;
+    z-index: 123123;
+    opacity: 0.3;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+}
+
+.content > .option{
+    display: flex;
+    position: fixed;
+    z-index: 123124;
+    top: 5rem;
+    left: 0;
+    right: 0;
+    max-width: 780px;
+    max-height: 500px;
+    text-align: center;
+    margin: auto;
+    padding-bottom: 20px;    
+}
+.input-lable{
+    color: #5c2e00;
+    display: block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.option .input-row input, .option .input-row select{
+    width: 100%;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #d2d2d2;
+    margin-bottom: 20px;
+}
+
+.option .input-row [name='gender']{
+    display: inline-block;
+    width: auto;
+    height: inherit;
+    padding: 0;
+    border: none;
+}
+
+.ghep-cap{
+    width: 100%;
+    padding: 15px;
+    border: 1px solid black;
+    background-color: #ccc;
+}
+.ghep-title{
+    padding: 5px;
+}
+.title-text{
+    color: #bb5600;
+    font-size: 24px;
+    font-weight: 600;
+}
+.ghep-body{
+    padding: 10px;
+    border: 1px solid #bf8d1b63;
+}
+.ghep-options{
+    margin: 12px;
+}
+
+.ghep-info{
+    text-align: left;
+    padding: 0px 16px;
+}
+.info-title{
+    text-align: left;
+    display: block;
+    font-size: 20px;
+    margin: 1rem 0;
+    color: #bb5600;
+    font-weight: 550;
+}
+.ghep-btn{
+    margin-bottom: 10px;
+}
+.ghep-option{
+    display: inline-block;
+    padding: 5 1.5rem;
+    margin: 0 1rem;
+    color: black;
+}
+.option-active{
+    background-color: #eaeaea !important;
+}
+.ghep-option:hover, .ghep-btn a:hover{
+    background-color: #eaeaea;
+}
+.ghep-btn a, .ghep-option{
+    border: 1px solid #a7a6a5;
+    background-color: white;
+}
+.ghep-btn a{
+    padding: 8px;
+    margin: 0 10px;
 }

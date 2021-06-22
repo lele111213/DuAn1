@@ -162,8 +162,56 @@ def get_user_lichsu(request):
             'user': {
                 'uimage' : user.image.url,
                 'ufullname': user.fullname,
+                # 'uage': 2021-int(user.age.strftime('%Y'))  chuyển ngày sinh ra tuổi hiện tại
             },
             'status': True,
             'message': 'success!'
         }
+        return JsonResponse(context)
+
+@login_required
+def start_ghep(request):
+    if request.method == "POST":
+        user = request.user
+        data = json.loads(request.body)
+        if data['option'] == 3:
+            # handle option 3
+            context = {
+                'status': True,
+                'message': 'Thành công',
+                'option' : 3
+            }
+        elif data['option'] ==2:
+            # handle option 2
+            context = {
+                'status': True,
+                'message': 'Thành công',
+                'option' : 2
+            }
+        else:
+            # handle option 1
+            context = {
+                'status': True,
+                'message': 'Thành công',
+                'option' : 1
+            }
+        context['user'] = {}
+        context['user']['uname'] = user.username
+        context['user']['uage'] = 2021-int(user.age.strftime('%Y'))
+        return JsonResponse(context)
+
+@login_required
+def stop_ghep(request):
+    if request.method == "POST":
+        user = request.user
+        data = json.loads(request.body)
+        option = data['option']
+        context = {
+            'option': option,
+            'status': True,
+            'message': 'Thành công',
+            'user': {}
+        }
+        context['user']['uname'] = user.username
+        context['user']['uage'] = 2021-int(user.age.strftime('%Y'))
         return JsonResponse(context)

@@ -1,5 +1,5 @@
 new Vue({
-    name:'home',
+    name:'base',
     delimiters: ["[[", "]]"],
     el: '.header',
     methods: {
