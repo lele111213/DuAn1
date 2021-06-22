@@ -23,6 +23,9 @@
                     <a v-on:click="option=3" v-bind:class="{'option-active' : option==3}" class="ghep-option">Đúng như tuỳ chọn</a>
                 </div>
                 <div class="info-title">Tuỳ chọn đối tượng muốn ghép</div>
+                <div v-if="message" v-bind:style="{ color: styleColor}">[[ message ]]</div>
+                <div v-if="option==1" class="ghep-info">Chọn ngẫu nhiên bất cứ ai đang ghép cặp.</div>
+                <div v-if="option==2" class="ghep-info">Chọn đối tượng có tuổi, nơi ở gần giống bản thân (khác giới tính)</div>
                 <div v-if="option==3" class="ghep-info">
                     <div class="input-row">
                         <label class="input-lable">Địa chỉ (tỉnh, thành phố)</label>

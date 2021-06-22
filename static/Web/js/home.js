@@ -12,7 +12,8 @@ new Vue({
         start: false,
         option: 3,
         errored: null,
-        message: null
+        message: null,
+        styleColor: null
     },
     created() {
     },
@@ -37,11 +38,15 @@ new Vue({
             .then(response => {
                 if(response.data.status){
                     this.start = true
+                    this.message = "Đang chờ..."
+                    this.styleColor = "#aeb900"
                      //handle start
                 }
-                else
+                else{
                     this.errored = true
-                this.message = response.data.message
+                    this.styleColor = "red"
+                    this.message = response.data.message
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -63,11 +68,13 @@ new Vue({
             .then(response => {
                 if(response.data.status){
                     this.start = false
+                    this.message = ""
                     //handle stop
                 }
-                else
+                else{
                     this.errored = true
-                this.message = response.data.message
+                    this.message = response.data.message   
+                }
             })
             .catch(error => {
                 console.log(error)
