@@ -16,31 +16,35 @@
 <body>
   <div class="header">
     <div class="navbar">
-      <a href="{% url 'home' %}">Home</a>
-      <a href="#">Contact</a>
+      <a href="/">Home</a>
+      <a href="/contact">Contact</a>
       <a href="#">About Us</a>
       <div class="right-nav">
-          <div v-if="logged" class="logged">
-            <a href="#">User: [[ username ]]</a>
+          {% if user.is_authenticated %}
+          <div class="logged">
+            <a href="#">User: {{ user.username }}</a>
             <ul>
-              <li><a href="">Thông tin cá nhân</a></li>
+              <li><a href="/user_info">Thông tin cá nhân</a></li>
               <li><a href="">Lịch sử ghép cặp</a></li>
               <li><a href="/logout">Đăng xuất</a></li>
             </ul>
           </div>
-          <div v-else class="unlogged">
-            <a href="{% url 'login' %}">Đăng nhập</a>
-            <a href="{% url 'register' %}">Đăng ký</a>
+          {% else %}
+          <div class="unlogged">
+            <a href="/login">Đăng nhập</a>
+            <a href="/register">Đăng ký</a>
           </div>
+          {% endif %}
       </div>
-      {{ name|json_script:"username"}}
-      <script src="/static/Web/js/base.js"></script>
+      <!-- {{ name|json_script:"username"}} -->
+      <!-- <script src="/static/Web/js/base.js"></script> -->
     </div>
   </div>
 
-  <div class="content">
+  <div class="background">
     {% block content %}{% endblock %}
   </div>
+
 
   <div class="footer">
     <h5>Website ghép cặp chat online</h5>

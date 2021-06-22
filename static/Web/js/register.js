@@ -15,7 +15,6 @@ new Vue({
             },
             error_message: "",
             errored: false,
-            info: null,
             loading: true,
         }
     },

@@ -1,7 +1,6 @@
+import Web
 import json
-from json.encoder import JSONEncoder
 from users.models import UserManager
-from django.http import response
 from django.http.response import HttpResponse, JsonResponse
 from django.middleware import csrf
 from django.shortcuts import redirect, render
@@ -23,6 +22,8 @@ def home(request):
 
         return render(request, 'Web/home.html', context)
 
+def contact(request):
+    return render(request, 'Web/contact.html')
 
 # register
 def register(request):
@@ -71,10 +72,72 @@ def logout(request):
 
 
 # user infomation
-@login_required
+@login_required(login_url='/login/?next=/user_info/')
 def user_info(request):
     if request.method == "GET":
         context = {
-            'name': "eeeeeee"
+            'name': request.user.username
         }
         return render(request, 'Web/user_info.html', context)
+
+@login_required
+def get_user_info(request):
+    if request.method == "GET":
+        user = request.user
+        context = {
+            'user': {
+                'uname' : user.username,
+                'ufullname': user.fullname,
+                'uphonenumber': user.phonenumber,
+                'uaddressId': user.addressId,
+                'uaddressName': user.addressName,
+                'ugender': user.gender,
+                'uage': user.age,
+                'uheight': user.height,
+                'uhobbies': user.hobbies,
+                'uimage': user.image.url
+            },
+            'status': True,
+            'message': ''
+        }
+        return JsonResponse(context)
+
+@login_required
+def update_user(request):
+    if request.method == "POST":
+        user = request.user
+        data = json.loads(request.body)
+        try:
+            user.fullname = data['user']['ufullname']
+            user.addressId = data['user']['uaddressId']
+            user.addressName = data['user']['uaddressName']
+            user.hobbies = data['user']['uhobbies']
+            user.height = data['user']['uheight']
+            user.gender = data['user']['ugender']
+            user.age = data['user']['uage']
+            user.phonenumber = data['user']['uphonenumber']
+            user.save(using=User.objects._db)
+            context = {
+                'status': True,
+                'message': 'success!'
+            }
+        except:
+            context = {
+                'status': False,
+                'message': 'failed!'
+            }
+        return JsonResponse(context)
+
+@login_required
+def update_user_image(request):
+    if request.method=="POST":
+        if request.FILES['image']:
+            image = request.FILES['image']
+            user = request.user
+            user.image = image
+            user.save(using=User.objects._db)
+            context = {
+                'status': True,
+                'message': 'success!'
+            }
+            return JsonResponse(context)

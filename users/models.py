@@ -7,7 +7,7 @@ from django.db.models.expressions import F
 
 class UserManager(BaseUserManager):
     
-    def create_user(self, username, password=None, fullname=None, is_active=True, is_staff=False, is_admin=False, phonenumber="", addressId=0, hieght=170, addressName="TP Hồ Chí Minh", gender="another", hobbies="", image="/images/default.jpg"):
+    def create_user(self, username, password=None, fullname=None, is_active=True, is_staff=False, age="1999-08-09", is_admin=False, phonenumber="", addressId=0, height=170, addressName="TP Hồ Chí Minh", gender="another", hobbies="", image="/images/default.jpg"):
     
         """
         Creates and saves a User.
@@ -28,7 +28,8 @@ class UserManager(BaseUserManager):
         user_obj.addressId = addressId
         user_obj.addressName = addressName
         user_obj.gender = gender
-        user_obj.hieght = hieght
+        user_obj.age = age
+        user_obj.height = height
         user_obj.hobbies = hobbies
         user_obj.image = image
         user_obj.staff = is_staff
@@ -70,7 +71,8 @@ class User(AbstractBaseUser):
     addressId = models.IntegerField(blank=True, default=0)
     addressName = models.CharField(max_length=255, blank=True, default="T.P Hồ Chí Minh")
     gender = models.CharField(max_length=10, blank=True, default="another")
-    hieght = models.IntegerField(blank=True, default=170, verbose_name="Chiều cao (cm)")
+    age = models.DateField(blank=True, default='1999-08-09')
+    height = models.IntegerField(blank=True, default=170, verbose_name="Chiều cao (cm)")
     hobbies = models.CharField(max_length=255, blank=True, default="")
     image = models.ImageField(upload_to='images', default='/images/default.jpg', blank=True)
     active = models.BooleanField(default=True)

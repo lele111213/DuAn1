@@ -1,0 +1,126 @@
+.message{
+    font-size: 20px;
+    display: inline-block;
+    padding-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+.message.success{
+    color: rgb(29, 182, 29);
+}
+.message.errored{
+    color: red;
+}
+
+.content-userinfo{
+    text-align: center;
+    display: flex;
+    margin: 48px auto 0;
+    width: 100%;
+    max-width: 940px;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.content-left{
+    flex: 0 0 350px;
+    max-width: 350px;
+    display: block;
+    margin: 20px 15px 0 0;
+    width: 100%;
+}
+
+.content-frame{
+    min-height: 500px;
+    position: relative;
+    padding: 10px;
+    background: #120401;
+    color: #eacf72;
+}
+
+.content-center{
+    text-align: left;
+    flex: 1;
+    display: block;
+    overflow: hidden;
+    margin-top: 20px;
+}
+.content-frame .user-info, .content-frame .side-nav{
+    padding-top: 10px;
+}
+.user-info .name{
+    color: darkturquoise;
+}
+.user-info .user-image{
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 120px;
+    margin: 20px 105px;
+}
+
+.side-nav .user-infomation{
+    margin-bottom: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 20px;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+}
+.side-nav .user-infomation a{
+    color: #eacf72;
+    height: 50px;
+    line-height: 44px;
+    padding: 0 20px 0 30px;
+    border: 3px solid #8e4814;
+    background: #441d00;
+    border-radius: 8px;
+    position: relative;
+    display: block;
+}
+.side-nav .user-infomation a:hover{
+    background: #5d2700;
+}
+.content-center .content-title{
+    font-size: 20px;
+    padding: 0 0 10px 0;
+    color: #fff;
+}
+.content-center .content-form{
+    position: relative;
+    padding: 15px;
+    background: #ffeed3;
+}
+.input-row{
+    position: relative;
+    padding: 0 10px;
+    margin: 0 -10px;
+}
+.content-form .input-row input, .content-form .input-row select{
+    width: 100%;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #d2d2d2;
+    margin-bottom: 30px;
+}
+.content-form .input-row [name='gender']{
+    display: inline-block;
+    width: auto;
+    height: inherit;
+    padding: 0;
+    border: none;
+}
+.input-row .input-lable{
+    color: #5c2e00;
+    display: block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+.content-form .btn-submit{
+    padding: 10px;
+    cursor: pointer;
+}

@@ -67,12 +67,14 @@ a{
     color: black;
 }
 
+.background{
+    background-image: url('/static/Web/images/background.jpg');
+}
 /* content */
 .content{
     margin-top: 48px;
-    background-image: url('/static/Web/images/background.jpg');
     position: relative;
-    height: 500px;
+    min-height: 500px;
     text-align: center;
 }
 

@@ -11,14 +11,15 @@ new Vue({
             info: null,
             errored: false,
             success: false,
-            success_message: ""
+            success_message: "",
+            next: window.location.href.indexOf('next=')
         }
     },
     mounted(){
         if (localStorage.success_message){
             this.success = true
             this.success_message = localStorage.success_message
-            setTimeout(()=>localStorage.success_message = "", 3000)
+            localStorage.success_message = ""
         }
     },
     methods: {
@@ -45,7 +46,11 @@ new Vue({
                         if(response.data.status){
                             this.success = true
                             this.success_message = response.data.message
-                            setTimeout(() => window.location.href = "http://localhost:8000", 1000);
+                            if(this.next != -1){
+                                window.location.href = 'http://localhost:8000'+window.location.href.slice(this.next+5)
+                            }else{
+                                window.location.href = 'http://localhost:8000';
+                            }
                         }else{
                             this.errored = true
                             this.error_message = response.data.message
@@ -54,7 +59,7 @@ new Vue({
                     .catch(error => {
                         console.log(error)
                         this.errored = true
-                        this.error_message = response.data.message
+                        this.error_message = error
                     })
             }
             else{
