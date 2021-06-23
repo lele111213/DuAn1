@@ -1,13 +1,12 @@
-import Web
 import json
-from users.models import UserManager
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import JsonResponse
 from django.middleware import csrf
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as user_login, logout as user_logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-User = get_user_model()
+from Web.models import WaitingRoom, ChatRoom, RoomChatMessage
+from users.models import User
+Waiting = WaitingRoom.objects.first()
 
 # Create your views here.
 
@@ -33,7 +32,7 @@ def register(request):
     if request.method == "POST":
         data = json.loads(request.body)
         try:
-            UserManager.create_user(User.objects, username=data['username'],fullname=data['fullname'],phonenumber=data['phonenumber'],addressId=data['addressId'], addressName=data['addressName'], gender=data['gender'], password=data['password'])
+            User.objects.create_user(username=data['username'],fullname=data['fullname'],phonenumber=data['phonenumber'],addressId=data['addressId'], addressName=data['addressName'], gender=data['gender'], password=data['password'])
             context = {
                 'message': "Đăng ký thành công!",
                 'status': True
@@ -92,7 +91,7 @@ def user_info(request):
             }
             return JsonResponse(context)
 
-@login_required
+@login_required(login_url='/login/?next=/user_info/')
 def get_user_info(request):
     if request.method == "GET":
         user = request.user
@@ -154,7 +153,7 @@ def update_user_image(request):
             }
             return JsonResponse(context)
 
-@login_required
+@login_required(login_url='/login/?next=/user_info/')
 def get_user_lichsu(request):
     if request.method == "GET":
         user = request.user
@@ -169,10 +168,18 @@ def get_user_lichsu(request):
         }
         return JsonResponse(context)
 
+def open_ghep(request):
+    user = request.user
+    if request.method == "GET":
+        if(user.is_authenticated):
+            return JsonResponse({'status': True})
+        return JsonResponse({'status': False})
+
 @login_required
 def start_ghep(request):
     if request.method == "POST":
         user = request.user
+        Waiting.add_user(user)
         data = json.loads(request.body)
         if data['option'] == 3:
             # handle option 3
@@ -204,6 +211,7 @@ def start_ghep(request):
 def stop_ghep(request):
     if request.method == "POST":
         user = request.user
+        Waiting.remove_user(user)
         data = json.loads(request.body)
         option = data['option']
         context = {

@@ -1,8 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
-from django.db.models.expressions import F
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
@@ -18,9 +15,7 @@ class UserManager(BaseUserManager):
             raise ValueError('User must have a password')
         if not fullname:
             raise ValueError('User must have full name')
-        user_obj = self.model(
-            username=self.normalize_email(username),
-        )
+        user_obj = User(username=username)
 
         user_obj.set_password(password)
         user_obj.fullname = fullname

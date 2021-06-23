@@ -19,8 +19,17 @@ new Vue({
     },
     methods: {
         openGhep (){
-            this.open = true
-            this.backgroundOpacity = true
+            axios.get(
+                'http://localhost:8000/api/open_ghep/'
+            ).then(response => {
+                if(response.data.status){
+                    this.open = true
+                    this.backgroundOpacity = true
+                }
+                else{
+                    window.location.href = 'http://localhost:8000/login/?next=/'
+                }
+            })
         },
         startGhep (){
             let data = {
@@ -86,6 +95,7 @@ new Vue({
             if(this.start){
                 confirm("Thoát sẽ dừng ghép cặp, bạn có chắc muốn thoát?")
                 this.stopGhep()
+                this.message = ""
             }
             this.open = false
         }

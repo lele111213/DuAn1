@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/get_user_lichsu/', views.get_user_lichsu, name='get_user_lichsu'),
     path('api/start_ghep/', views.start_ghep, name='start_ghep'),
     path('api/stop_ghep/', views.stop_ghep, name='stop_ghep'),
+    path('api/open_ghep/', views.open_ghep, name='open_ghep'),
     
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
