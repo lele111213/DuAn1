@@ -227,19 +227,21 @@ def stop_ghep(request):
 
 @login_required(login_url='/login')
 def get_room_chat(request):
-    if request.method == "POST":
-        room_id = json.loads(request.body)['room_id']
-        messages = RoomChatMessage.objects.all_chat(room_id)
-        mess = []
-        for ms in messages:
-            mess.append({
-                'fullname': ms.user.fullname,
-                'uimage': ms.user.image.url,
-                'timestamp': ms.timestamp.strftime('%Y-%m-%d %H:%M'),
-                'content': ms.content,
-                'username': ms.user.username,
+    room_id = json.loads(request.body)['room_id']
+    room = ChatRoom.objects.filter(id=room_id).first()
+    if room:
+        room_title = room.title
+    messages = RoomChatMessage.objects.all_chat(room_id)
+    mess = []
+    for ms in messages:
+        mess.append({
+            'fullname': ms.user.fullname,
+            'uimage': ms.user.image.url,
+            'timestamp': ms.timestamp.strftime('%Y-%m-%d %H:%M'),
+            'content': ms.content,
+            'username': ms.user.username,
             })
-        return JsonResponse({'room_id': room_id, 'username': request.user.username, 'image':request.user.image.url, 'messages': mess})
+    return JsonResponse({'room_title': room_title, 'username': request.user.username, 'image':request.user.image.url, 'messages': mess})
 
 
 @login_required(login_url='/login')

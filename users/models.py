@@ -75,6 +75,7 @@ class User(AbstractBaseUser):
     image = models.ImageField(upload_to='images', default='/images/default.jpg', blank=True)
     channel = models.CharField(max_length=255, blank=True, default="")
     room_chat = ManyToManyField(ChatRoom, blank=True, help_text="user thuoc chatroom")
+    room_view = ManyToManyField(ChatRoom, blank=True, help_text="user only view", related_name='Viewer')
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser

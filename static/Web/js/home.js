@@ -13,7 +13,8 @@ new Vue({
         option: 3,
         errored: null,
         message: null,
-        styleColor: null
+        styleColor: null,
+        homeSocket: null
     },
     created() {
     },
@@ -32,64 +33,33 @@ new Vue({
             })
         },
         startGhep (){
-            let data = {
-                option: this.option
-            }
-            if (this.option==3)
-                data.user = this.user
-            axios
-            .post(
-                'http://localhost:8000/api/start_ghep/',data,
-                {
-                    headers: {'X-CSRFToken': window.$cookies.get('csrftoken')}
-                }
-            )
-            .then(response => {
-                if(response.data.status){
+            this.homeSocket = new WebSocket('ws://' + window.location.host + '/ws/ghep/' + this.option + '/')
+            this.homeSocket.onmessage = (e) => {
+                
+                const data = JSON.parse(e.data)
+                let status = data.status
+                if (status==0) {
+                    console.log(data);
                     this.start = true
-                    this.message = "Đang chờ..."
+                    this.message = data.message || "Đang chờ."
                     this.styleColor = "#aeb900"
-                     //handle start
+                }else if (status==2){
+                    alert("Ghép thành công!")
+                    window.location.href = 'http://localhost:8000/room/' + data.room_id + '/'
                 }
-                else{
-                    this.errored = true
-                    this.styleColor = "red"
-                    this.message = response.data.message
-                }
-            })
-            .catch(error => {
-                console.log(error)
-                this.errored = true
-            })
-            .finally(() => this.loading = false)
+            }
+            this.homeSocket.onclose = function(e) {
+                console.log(e);
+                if (e.code != 1000)
+                    alert("Có lỗi xảy ra, hãy đăng nhập lại!")
+            }
         },
         stopGhep (){
-            axios
-            .post(
-                'http://localhost:8000/api/stop_ghep/',
-                {
-                    option: this.option
-                },
-                {
-                    headers: {'X-CSRFToken': window.$cookies.get('csrftoken')}
-                }
-            )
-            .then(response => {
-                if(response.data.status){
-                    this.start = false
-                    this.message = ""
-                    //handle stop
-                }
-                else{
-                    this.errored = true
-                    this.message = response.data.message   
-                }
-            })
-            .catch(error => {
-                console.log(error)
-                this.errored = true
-            })
-            .finally(() => this.loading = false)
+
+            this.homeSocket.close()
+            this.start = false
+            this.message = ""
+
         },
         exitGhep (){
             if(this.start){

@@ -6,8 +6,9 @@ new Vue({
     data: {
         user: {
             'uname': null,
-            'room_id': 1,
+            'room_id': null,
             'image': null,
+            'room_title': null,
         },
         messages: [],
         chatSocket: null
@@ -21,7 +22,7 @@ new Vue({
             .post(
                 'http://localhost:8000/api/get_room_chat/',
                 {
-                    'room_id': this.user.room_id
+                    room_id: window.location.pathname.split('/')[2],
                 },
                 {
                     headers: {'X-CSRFToken': window.$cookies.get('csrftoken')}
@@ -29,26 +30,28 @@ new Vue({
             ).then(response => {
                 this.messages = response.data.messages
                 this.user.uname = response.data.username
-                this.room_id = response.data.room_id
+                this.user.room_id = window.location.pathname.split('/')[2]
                 this.user.image = response.data.image
+                this.user.room_title = response.data.room_title
+
+                this.chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + this.user.room_id + '/')
+                var ms = {}
+                this.chatSocket.onmessage = (e) => {
+                    
+                    const data = JSON.parse(e.data)
+                    if (data.message) {
+                        ms = data.message
+                        this.messages.push(ms)
+                    }
+                }
+                this.chatSocket.onclose = function(e) {
+                    alert("Có lỗi xảy ra, hãy đăng nhập lại!")
+                }
             }).catch(error => {
                 console.log(error)
                 this.errored = true
             })
-        var ms = {}
-        this.chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + this.user.room_id + '/')
-        this.chatSocket.onmessage = (e) => {
-            
-            const data = JSON.parse(e.data)
-            if (data.message) {
-                ms = data.message
-                this.messages.push(ms)
-            }
-        }
-            
-        this.chatSocket.onclose = function(e) {
-            alert("Có lỗi xảy ra, hãy đăng nhập lại!")
-        }
+    
 
     },
     updated (){

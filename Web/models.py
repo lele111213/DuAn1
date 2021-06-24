@@ -56,17 +56,29 @@ class ChatRoom(models.Model):
         is_user_added = False
         if not user in self.users.all():
             self.users.add(user)
+            if not user in self.view_users.all():
+                self.view_users.add(user)
             self.save()
             is_user_added = True
         elif user in self.users.all():
             is_user_added = True
         return is_user_added 
 
-    # remove = user ko xem đc nội dung của room này nữa
+    # remove = user vẫn xem đc nội dung của room này
     def remove_user(self, user):
         is_user_removed = False
         if user in self.users.all():
             self.users.remove(user)
+            self.save()
+            user.room_chat.remove(self)
+            user.save()
+            is_user_removed = True
+        return is_user_removed
+    # remove = user ko xem đc nội dung của room này nữa
+    def remove_viewer(self, user):
+        is_user_removed = False
+        if user in self.view_users.all():
+            self.view_users.remove(user)
             self.save()
             is_user_removed = True
         return is_user_removed
