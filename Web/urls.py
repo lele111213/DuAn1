@@ -11,6 +11,8 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('user_info/', views.user_info, name='user_info'),
     path('contact/', views.contact, name='contact'),
+    # path('chat/', views.chat, name='chat'),
+    path('room/<int:room_id>/', views.room, name='room'),
 
     # api
     path('api/get_user_info/', views.get_user_info, name='get_user_info'),
@@ -20,6 +22,7 @@ urlpatterns = [
     path('api/start_ghep/', views.start_ghep, name='start_ghep'),
     path('api/stop_ghep/', views.stop_ghep, name='stop_ghep'),
     path('api/open_ghep/', views.open_ghep, name='open_ghep'),
+    path('api/get_room_chat/', views.get_room_chat, name='get_room_chats'),
     
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

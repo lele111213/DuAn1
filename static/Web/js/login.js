@@ -16,6 +16,7 @@ new Vue({
         }
     },
     mounted(){
+        document.querySelector('#TenDangNhap').focus()
         if (localStorage.success_message){
             this.success = true
             this.success_message = localStorage.success_message
@@ -47,7 +48,7 @@ new Vue({
                             this.success = true
                             this.success_message = response.data.message
                             if(this.next != -1){
-                                window.location.href = 'http://localhost:8000'+window.location.href.slice(this.next+5)
+                                window.location.href = 'http://localhost:8000'+window.location.href.slice(this.next+5).replace('%3F','?').replace('%3D','=')
                             }else{
                                 window.location.href = 'http://localhost:8000';
                             }

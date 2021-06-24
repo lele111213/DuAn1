@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>GhepCapOnline</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+        <link rel="stylesheet" href="/static/Web/css/room.css">
+        <!-- vue -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-cookies@1.7.4/vue-cookies.min.js"></script>
+        <!-- end vue -->
+    </head>
+
+    <body>
+        <section class="section">
+            <div class="container">
+                <div class="columns is-multiline">
+                    <div class="column is-6 is-offset-3 mb-6">
+                        <section class="hero is-primary">
+                            <div class="hero-body">
+                                <p class="title">
+                                    Ghép cặp
+                                </p>
+                                <p class="subtitle">
+                                    A simple chat built with Django, Channels and Redis
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="column is-6 is-offset-3">
+                        <div class="box">
+                            <div id="chat-messages">
+                                <div  v-for="message in messages">
+
+                                    <template v-if="message.username == user.uname" >
+                                        <div class="self-box">
+                                            <div class="message self-message" >[[ message.content ]]</div>
+                                        </div>
+                                        <div class="message-time" style="text-align: right;">[[ message.timestamp ]]</div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="not-self-box">
+                                            <div v-bind:title="message.fullname" v-bind:style='{ backgroundImage: "url(" + message.uimage + ")"}' class="message-image"></div>
+                                            <div class="message" >[[ message.content ]]</div>
+                                        </div>
+                                        <div class="message-time">[[ message.timestamp ]]</div>
+                                    </template>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Message" id="chat-message-input">
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <a v-on:click="sendMessage" class="button is-info" id="chat-message-submit">Submit</a>
+                            </div>
+                        </div>
+
+                        <small class="has-text-grey-light">Your username: [[ user.uname ]] </small>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script src="/static/Web/js/room.js"></script>
+
+    </body>
+</html>

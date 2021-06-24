@@ -1,9 +1,10 @@
 import json
-from django.http.response import JsonResponse
+from django.http.response import HttpResponseNotAllowed, JsonResponse
 from django.middleware import csrf
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as user_login, logout as user_logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 from Web.models import WaitingRoom, ChatRoom, RoomChatMessage
 from users.models import User
 Waiting = WaitingRoom.objects.first()
@@ -71,7 +72,7 @@ def logout(request):
 
 
 # user infomation
-@login_required(login_url='/login/?next=/user_info/')
+@login_required(login_url='/login')
 def user_info(request):
     if request.method == "GET":
         return render(request, 'Web/user_info.html')
@@ -91,7 +92,7 @@ def user_info(request):
             }
             return JsonResponse(context)
 
-@login_required(login_url='/login/?next=/user_info/')
+@login_required(login_url='/login')
 def get_user_info(request):
     if request.method == "GET":
         user = request.user
@@ -153,7 +154,7 @@ def update_user_image(request):
             }
             return JsonResponse(context)
 
-@login_required(login_url='/login/?next=/user_info/')
+@login_required(login_url='/login')
 def get_user_lichsu(request):
     if request.method == "GET":
         user = request.user
@@ -168,12 +169,12 @@ def get_user_lichsu(request):
         }
         return JsonResponse(context)
 
+
 def open_ghep(request):
     user = request.user
-    if request.method == "GET":
-        if(user.is_authenticated):
-            return JsonResponse({'status': True})
-        return JsonResponse({'status': False})
+    if(user.is_authenticated):
+        return JsonResponse({'status': True})
+    return JsonResponse({'status': False})
 
 @login_required
 def start_ghep(request):
@@ -223,3 +224,31 @@ def stop_ghep(request):
         context['user']['uname'] = user.username
         context['user']['uage'] = 2021-int(user.age.strftime('%Y'))
         return JsonResponse(context)
+
+@login_required(login_url='/login')
+def get_room_chat(request):
+    if request.method == "POST":
+        room_id = json.loads(request.body)['room_id']
+        messages = RoomChatMessage.objects.all_chat(room_id)
+        mess = []
+        for ms in messages:
+            mess.append({
+                'fullname': ms.user.fullname,
+                'uimage': ms.user.image.url,
+                'timestamp': ms.timestamp.strftime('%Y-%m-%d %H:%M'),
+                'content': ms.content,
+                'username': ms.user.username,
+            })
+        return JsonResponse({'room_id': room_id, 'username': request.user.username, 'image':request.user.image.url, 'messages': mess})
+
+
+@login_required(login_url='/login')
+def room(request, room_id):
+    room = ChatRoom.objects.filter(id=room_id).first()
+    user = request.user
+    if room and user in room.view_users.all():
+        if request.method == "GET":
+            return render(request, 'Web/room.html')
+    return HttpResponseNotAllowed('405 ERROR')
+    
+        

@@ -1,5 +1,8 @@
+from re import T
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.db.models.fields.related import ManyToManyField
+from Web.models import ChatRoom
 
 
 class UserManager(BaseUserManager):
@@ -70,6 +73,8 @@ class User(AbstractBaseUser):
     height = models.IntegerField(blank=True, default=170, verbose_name="Chiều cao (cm)")
     hobbies = models.CharField(max_length=255, blank=True, default="")
     image = models.ImageField(upload_to='images', default='/images/default.jpg', blank=True)
+    channel = models.CharField(max_length=255, blank=True, default="")
+    room_chat = ManyToManyField(ChatRoom, blank=True, help_text="user thuoc chatroom")
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser

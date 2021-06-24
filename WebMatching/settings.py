@@ -33,7 +33,6 @@ AUTH_USER_MODEL = 'users.User'
 # Application definition
 
 INSTALLED_APPS = [
-    'Web.apps.WebConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #apps
-    'users'
+    'users.apps.UsersConfig',
+    'Web.apps.WebConfig',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +74,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'WebMatching.wsgi.application'
+ASGI_APPLICATION = 'WebMatching.asgi.application'
 
+CHANNEL_LAYERS ={
+    'default':{
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG':{
+            'hosts': [('127.0.0.1', 6379)],
+        }
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

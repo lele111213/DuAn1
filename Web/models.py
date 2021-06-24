@@ -45,6 +45,8 @@ class ChatRoom(models.Model):
 
     created_at  = models.DateTimeField(auto_now_add=True)
 
+    view_users  = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, help_text="user only view", related_name='Viewer')
+
 
     def __str__(self):
         return self.title
@@ -67,7 +69,12 @@ class ChatRoom(models.Model):
             self.users.remove(user)
             self.save()
             is_user_removed = True
-        return is_user_removed 
+        return is_user_removed
+
+    def in_room_chat(self, user):
+        if user in self.users.all():
+            return True
+        return False
 
 
     @property
@@ -81,16 +88,16 @@ class ChatRoom(models.Model):
 
 class RoomChatMessageManager(models.Manager):
 
-    def create_chat(self, user, room, content):
+    def create_chat(self, user, room_id, content):
         chat = RoomChatMessage()
         chat.user = user
-        chat.room = room
+        chat.room = ChatRoom.objects.filter(id=room_id).first()
         chat.content = content
         chat.save(using=self._db)
         return chat
 
     def all_chat(self, room):
-        qs = self.filter(room=room).order_by("-timestamp")
+        qs = self.filter(room=room).order_by("timestamp")
         return qs
 
 class RoomChatMessage(models.Model):
