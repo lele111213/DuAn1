@@ -4,9 +4,9 @@ new Vue({
     el: '.content',
     data: {
         user: {
-            'uaddressId': null,
+            'uaddressId': 999,
             'ugender': null,
-            'uage': null
+            'uage': ''
         },
         open: false,
         start: false,
@@ -33,7 +33,11 @@ new Vue({
             })
         },
         startGhep (){
-            this.homeSocket = new WebSocket('ws://' + window.location.host + '/ws/ghep/' + this.option + '/')
+            if (this.option == 3){
+                this.homeSocket = new WebSocket('ws://' + window.location.host + '/ws/ghep/' + this.option + '/' + (this.user.uage || 999) + '/' + this.user.ugender + '/' + this.user.uaddressId + '/')
+            }    
+            else
+                this.homeSocket = new WebSocket('ws://' + window.location.host + '/ws/ghep/' + this.option + '/')
             this.homeSocket.onmessage = (e) => {
                 
                 const data = JSON.parse(e.data)
@@ -63,11 +67,14 @@ new Vue({
         },
         exitGhep (){
             if(this.start){
-                confirm("Thoát sẽ dừng ghép cặp, bạn có chắc muốn thoát?")
-                this.stopGhep()
-                this.message = ""
+                if(confirm("Thoát sẽ dừng ghép cặp, bạn có chắc muốn thoát?")){
+                    this.stopGhep()
+                    this.message = ""
+                    this.open = false
+                }
             }
-            this.open = false
+            else
+                this.open = false
         }
     },
     components:{

@@ -21,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ['admin']
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('fullname', 'phonenumber', 'addressId', 'addressName', 'gender', 'height', 'hobbies', 'image', 'channel', 'room_chat', 'room_view')}),
+        ('Personal info', {'fields': ('fullname', 'phonenumber', 'addressId', 'addressName', 'gender', 'age', 'height', 'hobbies', 'image', 'channel', 'room_chat', 'room_view')}),
         ('Permissions', {'fields': ('admin','staff','active')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -29,7 +29,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'fullname', 'phonenumber', 'addressId', 'addressName', 'gender', 'height', 'hobbies', 'image', 'password1', 'password2', 'admin', 'staff', 'active')}
+            'fields': ('username', 'fullname', 'phonenumber', 'addressId', 'addressName', 'gender', 'age','height', 'hobbies', 'image', 'password1', 'password2', 'admin', 'staff', 'active')}
         ),
     )
     search_fields = ['username']

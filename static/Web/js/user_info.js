@@ -179,7 +179,6 @@ var userInfoTemplate = {
             success: null,
             message: null,
             loading: null,
-            select: "Thông tin tài khoản"
         }
     },
     updated() {
@@ -276,11 +275,20 @@ var userInfoTemplate = {
 var userLichSuTemplate = {
     delimiters: ["[[", "]]"],
     template: `
-        <h1>abc</h1>
+        <div>
+            <h3 style="color: black">Khi đã thoát khỏi room sau khi ghép cặp, thì chỉ có thể xem, không thể chat.</h3>
+            <div class="list-room">
+                <div v-for="room in list_room" class="room-view">
+                    <a v-bind:href="'/room/'+room.id"  target="_blank">
+                        <div class="room-title">[[ room.title ]]</div>
+                    </a>
+                </div>
+            </div>
+        </div>
     `,
     data: function () {
         return {
-            user: {}   
+            list_room: [],
         }
     },
     created() {
@@ -288,9 +296,9 @@ var userLichSuTemplate = {
             .get('http://localhost:8000/api/get_user_lichsu/')
             .then(response => {
                 if(response.data.status){
-                    this.user = response.data.user
-                    this.$root.user['uimage'] = this.user.uimage
-                    this.$root.user['ufullname'] = this.user.ufullname
+                    this.list_room = response.data.list_room
+                    this.$root.user['uimage'] = response.data.uimage
+                    this.$root.user['ufullname'] = response.data.ufullname
                 }else{
                     this.errored = true
                     this.message = response.data.message
@@ -324,21 +332,27 @@ new Vue({
         select: "Thông tin tài khoản"
     },
     created() {
-        if(localStorage.view == 'info')
+        if(localStorage.view == 'info'){
             this.loadUserInfo = true
-        else if (localStorage.view = 'lichsu')
+            this.select = "Thông tin tài khoản"
+        }
+        else if (localStorage.view = 'lichsu'){
+            this.select = "Lịch sử ghép cặp"
             this.loadUserLichSu = true
+        }
     },
     methods: {
         loadPageInfo () {
             this.select = "Thông tin tài khoản"
             this.loadUserInfo = true
             this.loadUserLichSu = false
+            localStorage.view = 'info'
         },
         loadPageLichSu () {
             this.select = "Lịch sử ghép cặp"
             this.loadUserInfo = false
             this.loadUserLichSu = true
+            localStorage.view = 'lichsu'
         },
     },
     components:{

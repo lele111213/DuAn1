@@ -19,8 +19,6 @@ urlpatterns = [
     path('api/update_user/', views.update_user, name='update_user'),
     path('api/update_user_image/', views.update_user_image, name='update_user_image'),
     path('api/get_user_lichsu/', views.get_user_lichsu, name='get_user_lichsu'),
-    path('api/start_ghep/', views.start_ghep, name='start_ghep'),
-    path('api/stop_ghep/', views.stop_ghep, name='stop_ghep'),
     path('api/open_ghep/', views.open_ghep, name='open_ghep'),
     path('api/get_room_chat/', views.get_room_chat, name='get_room_chats'),
     

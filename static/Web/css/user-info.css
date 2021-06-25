@@ -124,3 +124,19 @@
     padding: 10px;
     cursor: pointer;
 }
+
+.list-room .room-view{
+    padding: 10px;
+}
+
+.list-room .room-view a:hover .room-title{
+    cursor: pointer;
+    background-color: rgb(211, 211, 211);
+}
+
+.list-room .room-title{
+    color: black;
+    border: 1px solid black;
+    padding: 10px;
+    background: #c0c0c1;
+}
