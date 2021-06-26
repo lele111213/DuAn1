@@ -33,27 +33,23 @@ new Vue({
             })
         },
         startGhep (){
+            this.start = true
+            this.message = "Đang chờ."
+            this.styleColor = "#aeb900"
             if (this.option == 3){
                 this.homeSocket = new WebSocket('ws://' + window.location.host + '/ws/ghep/' + this.option + '/' + (this.user.uage || 999) + '/' + this.user.ugender + '/' + this.user.uaddressId + '/')
             }    
             else
                 this.homeSocket = new WebSocket('ws://' + window.location.host + '/ws/ghep/' + this.option + '/')
             this.homeSocket.onmessage = (e) => {
-                
+                console.log(e);
                 const data = JSON.parse(e.data)
-                let status = data.status
-                if (status==0) {
-                    console.log(data);
-                    this.start = true
-                    this.message = data.message || "Đang chờ."
-                    this.styleColor = "#aeb900"
-                }else if (status==2){
+                if (data.status==1){
                     alert("Ghép thành công!")
                     window.location.href = 'http://localhost:8000/room/' + data.room_id + '/'
                 }
             }
             this.homeSocket.onclose = function(e) {
-                console.log(e);
                 if (e.code != 1000)
                     alert("Có lỗi xảy ra, hãy đăng nhập lại!")
             }

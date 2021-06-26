@@ -1,3 +1,4 @@
+from random import triangular
 from Web.views import room
 import json
 
@@ -25,6 +26,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             check = await self.check_user(self.room_id, self.scope['user'])
             if check:
                 await self.accept()
+            else:
+                await self.close()
         
     
     async def disconnect(self, close_code):
@@ -111,12 +114,6 @@ class GhepConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         await self.accept()
-        await self.channel_layer.send(self.channel_name,
-        {
-            'type': 'home_ghep_cap',
-            'status': '0',
-            'message': 'Đang chờ!'
-        })
 
         self.option[self.channel_name] = self.kieu_ghep
         self.waiting_user.append(user)
@@ -132,7 +129,6 @@ class GhepConsumer(AsyncWebsocketConsumer):
 
         await self.add_user_channel(user, self.channel_name)
         
-        await self.add_room_waiting(user)
         print('--',self.option)
         for wu in self.waiting_user:
             print(wu.username, ':kieu_ghep=' , self.option[wu.channel])
@@ -147,183 +143,49 @@ class GhepConsumer(AsyncWebsocketConsumer):
             => kiểm tra điều kiện
         '''
         if len(self.waiting_user) > 1:
-            for u in self.waiting_user:
-                if not u is user:
+            for u in self.waiting_user[0:-1]:
+                if u.username != user.username:
+                    # Bản thân ghép ngẫu nhiên (1)
                     if self.kieu_ghep==1:
-                        if self.option[u.channel]==1:
+                        # Mục tiêu ghép ngẫu nhiên (1)
+                        if self.option[u.channel]==1: 
                             r_id = await self.gep_cap(user, u)
-                            await self.channel_layer.send(user.channel,
-                                    {
-                                        'type': 'ghep_thanh_cong',
-                                        'status': '2',
-                                        'message': 'Thành công!',
-                                        'room_id': r_id,
-                                    })
-                            await self.channel_layer.send(u.channel,
-                                    {
-                                        'type': 'ghep_thanh_cong',
-                                        'status': '2',
-                                        'message': 'Thành công!',
-                                        'room_id': r_id,
-                                    })
-                        elif self.option[u.channel]==2:
-                            # option 2
-                            point_total = 0
-                            point_total += await self.point_address(u, user)
-                            point_total += await self.point_age(u, user)
-                            point_total += await self.point_gender(u, user)
-                            print(point_total)
-                            if point_total == 3:
+                            await self.send_success(user.channel, u.channel, r_id)
+                        else:
+                            # mục tiêu ghép gần giống (2)
+                            if self.option[u.channel]==2:
+                                point_total = await self.total_point(u, user)
+                            # Mục tiêu ghép theo tuỳ chọn (3)
+                            elif self.option[u.channel]==3:
+                                req = self.requires[u.channel]
+                                point_total = await self.total_point(req, user, accuracy=True)
+                            if point_total==3:
                                 r_id = await self.gep_cap(user, u)
-                                await self.channel_layer.send(user.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                                await self.channel_layer.send(u.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                        elif self.option[u.channel]==3:
-                            point_total = 0
-                            req = self.requires[u.channel]
-                            point_total += await self.point_address(req, user, accuracy=True)
-                            point_total += await self.point_age(req, user, accuracy=True)
-                            point_total += await self.point_gender(req, user, accuracy=True)
-                            print(point_total)
-                            if point_total == 3:
-                                r_id = await self.gep_cap(user, u)
-                                await self.channel_layer.send(user.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                                await self.channel_layer.send(u.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
+                                await self.send_success(user.channel, u.channel, r_id)
+                    # Bản thân ghép gần giống (2)
                     elif self.kieu_ghep==2:
                         if self.option[u.channel]==1 or self.option[u.channel]==2:
-                            point_total = 0
-                            point_total += await self.point_address(u, user)
-                            point_total += await self.point_age(u, user)
-                            point_total += await self.point_gender(u, user)
-                            print(point_total)
-                            if point_total == 3:
-                                r_id = await self.gep_cap(user, u)
-                                await self.channel_layer.send(user.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                                await self.channel_layer.send(u.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
+                            point_total = await self.total_point(u, user)
                         elif self.option[u.channel]==3:
-                            point_total = 0
                             req = self.requires[u.channel]
-                            point_total += await self.point_address(req, user, accuracy=True)
-                            point_total += await self.point_age(req, user, accuracy=True)
-                            point_total += await self.point_gender(req, user, accuracy=True)
-                            print(point_total)
-                            if point_total == 3:
-                                r_id = await self.gep_cap(user, u)
-                                await self.channel_layer.send(user.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                                await self.channel_layer.send(u.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
+                            point_total = await self.total_point(req, user, accuracy=True)
+                        if point_total==3 or point_total==6:
+                            r_id = await self.gep_cap(user, u)
+                            await self.send_success(user.channel, u.channel, r_id)
+                    # Bản thân ghép tuỳ chọn (3)
                     else:
+                        req = self.requires[user.channel]
+                        point_total = await self.total_point(req, u, accuracy=True)
                         if self.option[u.channel]==3:
-                            point_total = 0
-                            # kiểm tra yêu cầu của mình
-                            req = self.requires[user.channel]
-                            point_total += await self.point_address(req, u, accuracy=True)
-                            point_total += await self.point_age(req, u, accuracy=True)
-                            point_total += await self.point_gender(req, u, accuracy=True)
-                            print(point_total)
                             if point_total == 3:
-                                # kiểm tra yêu cầu của đối phương
                                 req = self.requires[u.channel]
-                                point_total += await self.point_address(req, user, accuracy=True)
-                                point_total += await self.point_age(req, user, accuracy=True)
-                                point_total += await self.point_gender(req, user, accuracy=True)
-                            print(point_total)
-                            if point_total == 6:
-                                r_id = await self.gep_cap(user, u)
-                                await self.channel_layer.send(user.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                                await self.channel_layer.send(u.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                        else:
-                            point_total = 0
-                            req = self.requires[user.channel]
-                            point_total += await self.point_address(req, u, accuracy=True)
-                            point_total += await self.point_age(req, u, accuracy=True)
-                            point_total += await self.point_gender(req, u, accuracy=True)
-                            print(point_total)
+                                point_total += await self.total_point(req, user, accuracy=True)
+                        elif self.option[u.channel]==2:
                             if point_total == 3:
-                                r_id = await self.gep_cap(user, u)
-                                await self.channel_layer.send(user.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-                                await self.channel_layer.send(u.channel,
-                                        {
-                                            'type': 'ghep_thanh_cong',
-                                            'status': '2',
-                                            'message': 'Thành công!',
-                                            'room_id': r_id,
-                                        })
-
-
-    async def home_ghep_cap(self, event):
-        status = event['status']
-        message = event['message']
-
-        # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message,
-            'status': status,
-        }))
+                                point_total += await self.total_point(u, user)
+                        if point_total==3 or point_total==6:
+                            r_id = await self.gep_cap(user, u)
+                            await self.send_success(user.channel, u.channel, r_id)
 
 
     async def ghep_thanh_cong(self, event):
@@ -351,8 +213,6 @@ class GhepConsumer(AsyncWebsocketConsumer):
         self.waiting_user.remove(user)
 
         await self.remove_user_channel(user)
-        
-        await self.leave_room(user)
 
     
     # Receive message from web socket
@@ -365,6 +225,24 @@ class GhepConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message'
             }
         )
+
+
+    async def send_success(self, channel1, channel2, room_id):
+        print("ghep thanh cong, room id:" , room_id)
+        await self.channel_layer.send(channel1,
+            {
+                'type': 'ghep_thanh_cong',
+                'status': '1',
+                'message': 'Thành công!',
+                'room_id': room_id,
+            })
+        await self.channel_layer.send(channel2,
+            {
+                'type': 'ghep_thanh_cong',
+                'status': '1',
+                'message': 'Thành công!',
+                'room_id': room_id,
+            })
 
     @sync_to_async
     def gep_cap(self, user1, user2):
@@ -383,6 +261,13 @@ class GhepConsumer(AsyncWebsocketConsumer):
         room_id = chatRoom.id
         return room_id
 
+
+    async def total_point(self, user1, user2, accuracy=False):
+        point_total = 0
+        point_total += await self.point_address(user1, user2, accuracy)
+        point_total += await self.point_age(user1, user2, accuracy)
+        point_total += await self.point_gender(user1, user2, accuracy)
+        return point_total
 
     @sync_to_async
     def point_age(self, user1, user2, accuracy=False):
@@ -429,23 +314,6 @@ class GhepConsumer(AsyncWebsocketConsumer):
                 point += 1
         return point
 
-            
-
-    # thêm vào phòng chờ
-    @sync_to_async
-    def add_room_waiting(self, user):
-        room = WaitingRoom.objects.first()
-        if not room:
-            self.disconnect()
-        room.add_user(user)
-    
-    # Xoá khỏi phòng chờ
-    @sync_to_async
-    def leave_room(self, user):
-        room = WaitingRoom.objects.first()
-        if not room:
-            self.disconnect()
-        room.remove_user(user)
 
     # add channel_name vào user để tìm user bên trong kênh này (Waiting Room)
     @sync_to_async

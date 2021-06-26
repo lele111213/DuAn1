@@ -33,8 +33,9 @@ new Vue({
                 this.user.room_id = window.location.pathname.split('/')[2]
                 this.user.image = response.data.image
                 this.user.room_title = response.data.room_title
-
+                
                 this.chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + this.user.room_id + '/')
+                
                 var ms = {}
                 this.chatSocket.onmessage = (e) => {
                     
@@ -45,7 +46,10 @@ new Vue({
                     }
                 }
                 this.chatSocket.onclose = function(e) {
-                    alert("Có lỗi xảy ra, hãy đăng nhập lại!")
+                    if(e.code == 1006)
+                        alert("Bạn chỉ có quyền xem nội dung này.")
+                    else
+                        alert("Có lỗi xảy ra, hãy đăng nhập lại!")
                 }
             }).catch(error => {
                 console.log(error)
@@ -59,6 +63,10 @@ new Vue({
     },
     methods: {
         sendMessage() {
+            if(this.chatSocket.readyState == 3){
+                alert("Bạn chỉ có quyền xem.")
+                return
+            }
             const messageInputDom = document.querySelector('#chat-message-input')
             const message = messageInputDom.value
             if (!message) {

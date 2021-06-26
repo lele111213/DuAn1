@@ -1,4 +1,4 @@
 {
     "editor.fontLigatures": null,
-    "python.pythonPath": "../venv/Scripts/python.exe"
+    "python.pythonPath": "../venv/bin/python3"
 }

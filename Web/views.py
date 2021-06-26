@@ -4,10 +4,8 @@ from django.middleware import csrf
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login as user_login, logout as user_logout
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
-from Web.models import WaitingRoom, ChatRoom, RoomChatMessage
+from Web.models import ChatRoom, RoomChatMessage
 from users.models import User
-Waiting = WaitingRoom.objects.first()
 
 # Create your views here.
 
