@@ -63,7 +63,7 @@ new Vue({
     },
     methods: {
         sendMessage() {
-            if(this.chatSocket.readyState){
+            if(this.chatSocket.readyState == 3){
                 alert("Bạn chỉ có quyền xem.")
                 return
             }
