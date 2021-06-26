@@ -25,6 +25,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             check = await self.check_user(self.room_id, self.scope['user'])
             if check:
                 await self.accept()
+            else:
+                await self.close()
         
     
     async def disconnect(self, close_code):
