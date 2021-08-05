@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     #apps
     'users.apps.UsersConfig',
     'Web.apps.WebConfig',
+    'VnPay.apps.VnPayConfig',
     'channels',
 ]
 
@@ -145,3 +146,16 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# VNPAY CONFIG
+VNPAY_RETURN_URL = 'http://localhost:8000/vnpay/payment_return'  # get from config
+VNPAY_PAYMENT_URL = 'http://sandbox.vnpayment.vn/paymentv2/vpcpay.html'  # get from config
+VNPAY_API_URL = 'http://sandbox.vnpayment.vn/merchant_webapi/merchant.html'
+VNPAY_TMN_CODE = 'KNRZOITL'  # Website ID in VNPAY System, get from config
+VNPAY_HASH_SECRET_KEY = 'RWAYPFWOVUIWHKJZLEATNLLWWBESNRJH'  # Secret key for create checksum,get from config
+# TAI KHOAN TEST
+# Ngân hàng: NCB
+# Số thẻ: 9704198526191432198
+# Tên chủ thẻ:NGUYEN VAN A
+# Ngày phát hành:07/15
+# Mật khẩu OTP:123456
