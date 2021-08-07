@@ -8,7 +8,7 @@
             <ul class="list-group">
                 <i class="list-group-item"><a href="{% url 'payment' %}">Demo Payment</a></i>
                 <i class="list-group-item"><a href="{% url 'query' %}">Demo Query (Kiểm tra kết quả Giao dịch tại
-                    VNPAY, bản local không bị vnpay chặn chức năng này)</a></i>
+                    VNPAY)</a></i>
                 <i class="list-group-item"><a href="{% url 'refund' %}">Demo Refund (Gửi yêu cầu hoàn tiền cho giao
                     dịch)</a></i>
             </ul>
@@ -18,8 +18,34 @@
             </ul>
             <strong style="padding-left: 5px">ZaloPay Demo</strong>
             <ul class="list-group">
-                <i class="list-group-item"><a href="{% url 'payment' %}">Demo payment</a></i>
+                <i class="list-group-item"><a href="{% url 'zalo_payment' %}">Demo payment</a></i>
             </ul>
+            <strong style="padding-left: 5px">Thông tin test VNPAY</strong>
+            <ul class="list-group">
+                <i class="list-group-item">Ngân hàng: <strong>NCB</strong></i>
+                <i class="list-group-item">Số thẻ: <input id='soThe' disabled value="9704198526191432198"><button style="margin-left:10px" onclick="myFunction('soThe')">Copy text</button></i>
+                <i class="list-group-item">Tên chủ thẻ: <input id='tenChuThe' disabled value="NGUYEN VAN A"><button style="margin-left:10px" onclick="myFunction('tenChuThe')">Copy text</button></i>
+                <i class="list-group-item">Ngày phát hành: <input id='ngayPhatHanh' disabled value="07/15"><button style="margin-left:10px" onclick="myFunction('ngayPhatHanh')">Copy text</button></i>
+                <i class="list-group-item">Mật khẩu OTP: <input id='OTP' disabled value="123456"><button style="margin-left:10px" onclick="myFunction('OTP')">Copy text</button></i>
+                <i class="list-group-item"><a href="https://sandbox.vnpayment.vn/apis/vnpay-demo/#thông-tin-thẻ-test" target="_blank"> <strong>Xem thêm</a></i>
+            </ul>
+            <strong style="padding-left: 5px">Thông tin test MOMO, ZALOPAY</strong>
+            <ul class="list-group">
+                <i class="list-group-item">link download app ZaloPay test <a href="https://dev.zalopay.com.vn/qrcode/public/app/android/merchant.html" target="_blank">Android(Sandbox)</a> - <a href="https://stcstg.zalopay.com.vn/ps_res/ios/enterprise/sandboxmer/6.3.0/install.html" target="_blank">IOS</a>. Sau khi tải xong nạp tiền cho app test ở <a href="https://developer.zalopay.vn/start/#A-II" target="_blank">đây</a></i>
+                <i class="list-group-item"><a href="https://test-payment.momo.vn/download/" target="_blank">link download app Momo test</a>. Tải xong thì đăng ký số điện thoại mới, tiến hành nạp tiền như bình thường (nạp thành công nhưng <strong>không</strong> mất tiền). Mật khẩu: 000000
+- Mã xác thực (OTP): 000000. Xem chi tiết ở <a href="https://developers.momo.vn/#/docs/testing_information" target="_blank">đây</a></i>
+            </ul>
+        </div>
+    </div>
+    <script>
+        function myFunction(idInput) {
+          var copyText = document.getElementById(idInput);
+          copyText.disabled = false
+          copyText.select();
+          copyText.disabled = true
+          document.execCommand("copy");
+        }
+    </script>
         </div>
     </div>
 {% endblock %}

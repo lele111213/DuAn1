@@ -3,14 +3,19 @@ import urllib.parse
 import json
 import hmac
 import hashlib
+import time
+import os
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+from base64 import b64encode
 from datetime import datetime
 from django.http import JsonResponse
-from django.http.response import HttpResponse
+from django.http.response import HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from users.models import User, BillPay
-from VnPay.forms import MomoPaymentForm, PaymentForm
+from VnPay.forms import MomoPaymentForm, PaymentForm, ZaloPaymentForm
 from VnPay.vnpay import vnpay
 from django.conf import settings
 
@@ -403,3 +408,180 @@ def momo_payment_return(request):
     )
     else:
         return render(request, "VnPay/momo_payment_return.html", {"title": "Kết quả thanh toán", "localMessage": ""})
+
+
+def zalo_payment(request):
+    if request.method == 'POST':
+        # momo
+        form = ZaloPaymentForm(request.POST)
+        user = request.user
+        datetCreate = datetime.now().strftime('%y%m%d')
+        datetCreateMili =  round(time.time() * 1000)
+        if form.is_valid():
+            # request
+            app_user = form.cleaned_data['username']
+            amount = str(form.cleaned_data['amount'])
+            description = form.cleaned_data['order_desc']
+            app_id = settings.ZALO_APPID
+            app_trans_id = datetCreate
+            app_time = datetCreateMili
+            item = json.dumps([{"itemname":"coin","itemprice":amount}])
+            callback_url = settings.ZALO_CALLBACK_URL
+            embed_data = json.dumps({"redirecturl": settings.ZALO_RETURN_URL})
+            bank_code = ''
+            # create bill
+            if user.is_authenticated:
+                print('logged in')
+                bill = BillPay(user=user,amount=int(amount))
+                bill.save()
+                app_trans_id += '_'+str(bill.id)
+                description += "#" + app_trans_id
+            else:
+                return JsonResponse({'code': '403', 'Message': 'Hay dang nhap truoc', 'data': ''})
+            # mac
+            dataGetHmac = app_id +"|"+ app_trans_id +"|"+ app_user +"|"+ amount +"|"+ str(app_time) +"|"+ embed_data +"|"+ item
+            h = hmac.new( bytes(settings.ZALO_KEY1, 'utf-8'), bytes(dataGetHmac,'utf-8'), hashlib.sha256 )
+            mac = h.hexdigest()
+            print("hmac\n" + mac)
+            data = {
+                    'app_id' : int(app_id),
+                    'app_user' : app_user,
+                    'app_trans_id' : app_trans_id,
+                    'app_time' : app_time,
+                    'amount' : int(amount),
+                    'item' : item,
+                    'description' : description,
+                    'embed_data' : embed_data,
+                    'bank_code' : bank_code,
+                    'mac' : mac,
+                    'callback_url' : callback_url
+            }
+            data = json.dumps(data).encode('utf-8')
+            print(data)
+            clen = len(data)
+
+            headers = {}
+            headers['Content-Type']='application/json; charset=UTF-8'
+            headers['Content-Length']=clen
+
+            try:
+                req = urllib.request.Request(settings.ZALO_ENDPOINT, data=data, headers=headers)
+                f = urllib.request.urlopen(req)
+
+                response = f.read()
+                f.close()
+                print("--------------------JSON response----------------\n")
+                print(response.decode('utf-8')+"\n")
+                
+                order_url = json.loads(response)['order_url']
+                print("order_url\n")
+                print(order_url+"\n")
+                if request.is_ajax():
+                    # Show Momo Popup
+                    result = JsonResponse({'code': '00', 'Message': 'Init Success', 'data': order_url})
+                    return result
+                else:
+                    # Redirect to Momo
+                    return redirect(order_url)
+            except:
+                result = JsonResponse({'code': '403', 'Message': 'không thể kết nối tới ZALO', 'data': ""})
+                return result
+        else:
+            print("Form input not validate")
+            result = JsonResponse({'code': '-1', 'Message': 'Form input not validate', 'data': ""})
+            return result
+    else:
+        return render(request, "VnPay/zalo_payment.html", {"title": "Thanh toán"})
+
+
+@csrf_exempt
+@csrf_exempt
+def zalo_payment_ipn(request):
+    if request.method == "POST":
+        print('get back oke')
+        resp = json.loads(request.body)
+        print(resp['data'])
+        result = {}
+        try:
+            mac = hmac.new(settings.ZALO_KEY2.encode(), resp['data'].encode(), hashlib.sha256).hexdigest()
+
+            # kiểm tra callback hợp lệ (đến từ ZaloPay server)
+            if mac != resp['mac']:
+                # callback không hợp lệ
+                result['return_code'] = -1
+                result['return_message'] = 'mac not equal'
+                print('call back ko hợp lệ')
+            else:
+            # thanh toán thành công
+                dataJson = json.loads(resp['data'])
+                print("update order's status = success where app_trans_id = " + dataJson['app_trans_id'])
+                # cộng tiền vào tài khoản user
+                user = User.objects.filter(username=dataJson['app_user']).first()
+                if user:
+                    bill = BillPay(user=user,amount=dataJson['amount'], status=1)
+                    bill.save()
+                    user.coin += bill.amount
+                    user.save()
+                    print("Cộng tiền thành công cho:"+user.username+", số tiền: "+str(bill.amount))
+                else:
+                    print("nạp tiền cho user không tồn tại.")
+                result['return_code'] = 1
+                result['return_message'] = 'success'
+        except Exception as e:
+            result['return_code'] = 0 # ZaloPay server sẽ callback lại (tối đa 3 lần)
+            result[' e'] = str(e)
+        return JsonResponse(result)
+    return HttpResponseNotFound()
+
+
+def zalo_payment_return(request):
+    inputData = request.GET
+    if inputData:
+        amount = int(inputData['amount'])
+        discountamount = inputData['discountamount']
+        checksum = inputData['checksum']
+        appid = inputData['appid']
+        apptransid = inputData['apptransid']
+        status = inputData['status']
+        if status == "1":
+            message = "Thành công"
+        else:
+            message = "Thất bại"
+        return render(request, "VnPay/zalo_payment_return.html",
+                        {
+                            "title": "Kết quả thanh toán",
+                            "status": status,
+                            "apptransid": apptransid,
+                            "appid": appid,
+                            "amount": amount,
+                            "discountamount": discountamount,
+                            "checksum": checksum,
+                            "message": message
+                        }
+    )
+    else:
+        return render(request, "VnPay/zalo_payment_return.html", {"title": "Kết quả thanh toán", "localMessage": ""})
+
+
+# api xử lý hash cho momo từ app mobile gửi lên. bản local ko dùng tới
+@csrf_exempt
+def mobile_momo_payment(request):
+    if request.method == "POST":
+        resp = json.loads(request.body)
+        module_dir = os.path.dirname(__file__)  # get current directory
+        file_path = os.path.join(module_dir, 'rsa/mykey.pem')
+        f = open(file_path, 'r')
+        key = RSA.importKey(f.read())
+        f.close()
+        rowData = {
+          'partnerCode': resp['partnerCode'],
+          'partnerRefId': resp['partnerRefId'],
+          'amount': resp['amount'],
+          'partnerName': resp['partnerName']
+        }
+        cipher = Cipher_PKCS1_v1_5.new(key)
+        cipher_text = cipher.encrypt(json.dumps(rowData).encode())
+        hash = b64encode(cipher_text)
+        resp['hash'] = hash
+    print("get from mobile")
+    return JsonResponse({"status":1,"message":"thành công","hash": hash.decode("utf-8") })

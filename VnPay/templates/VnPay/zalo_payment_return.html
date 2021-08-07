@@ -1,0 +1,19 @@
+{% extends "VnPay/base_layout.html" %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ title }}: {{ result }}</div>
+        <div class="panel-body">
+            <p>status: {{ status }}</p>
+            <p>apptransid: {{ apptransid }}</p>
+            <p>appid: {{ appid }}</p>
+            <p>amount: {{ amount }}</p>
+            <p>discountamount: {{ discountamount }}</p>
+            <p>checksum: {{ checksum }}</p>
+            {% if status != '1' %}
+                <p style="color: red"><strong>message: {{ message }}</strong></p>
+            {% else %}
+                <p style="color: green"><strong>message: {{ message }}</strong></p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

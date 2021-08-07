@@ -163,3 +163,12 @@ VNPAY_HASH_SECRET_KEY = 'RWAYPFWOVUIWHKJZLEATNLLWWBESNRJH'  # Secret key for cre
 # MOMO CONFIG
 MOMO_RETURN_URL = 'http://localhost:8000/vnpay/momo_payment_return'
 MOMO_IPN_URL = 'https://nhaibauxx.pythonanywhere.com/vnpay/momo_payment_ipn/'
+
+# ZALO CONFIG
+ZALO_ENDPOINT = "https://sb-openapi.zalopay.vn/v2/create"
+ZALO_APPID = "2554"
+ZALO_KEY1 = "sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn"
+ZALO_KEY2 = "trMrHtvjo6myautxDUiAcYsVtaeQ8nhf"
+ZALO_RETURN_URL = "http://localhost:8000/vnpay/zalo_payment_return"
+# ZALO_CALLBACK_URL = "http://localhost:8000/vnpay/zalo_payment_ipn/"
+ZALO_CALLBACK_URL = "https://nhaibauxx.pythonanywhere.com/vnpay/zalo_payment_ipn/"

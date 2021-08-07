@@ -1,0 +1,61 @@
+{% extends "VnPay/base_layout.html" %}
+{% block content %}
+
+    <h3>{{ title }}</h3>
+    <div class="table-responsive">
+        <form action="{% url 'zalo_payment' %}" id="create_form" method="post">
+            <div class="form-group">
+                <label for="username">username (tên đăng nhập)</label>
+                <input class="form-control" id="username"
+                       name="username" type="text" value="admin"/>
+            </div>
+            <div class="form-group">
+                <label for="amount">Số tiền</label>
+                <input class="form-control" id="amount"
+                       name="amount" type="number" value="10000"/>
+            </div>
+            <div class="form-group">
+                <label for="order_desc">Nội dung thanh toán</label>
+                <textarea class="form-control" cols="20" id="order_desc" name="order_desc" rows="2">Thanh toan don hang thoi gian: {% now "Y-m-d H:i:s" %}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btnPopup">Thanh toán Popup</button>
+            <button type="submit" class="btn btn-default">Thanh toán Redirect</button>
+            {% csrf_token %}
+        </form>
+    </div>
+    
+    <link href="https://pay.vnpay.vn/lib/vnpay/vnpay.css" rel="stylesheet"/>
+    <script src="https://pay.vnpay.vn/lib/vnpay/vnpay.js"></script>
+    <script type="text/javascript">
+        
+        $("#btnPopup").one('click', function (e) {
+            var postData = $("#create_form").serialize();
+            var submitUrl = $("#create_form").attr("action");
+            var token = document.getElementsByName('csrfmiddlewaretoken')[0].value
+            $.ajaxSetup({headers:{"X-CSRFToken": token}})
+            $.ajax({
+                type: "POST",
+                url: submitUrl,
+                data: postData,
+                dataType: 'JSON',
+                success: function (x) {
+                    if (x.code === '00') {
+                        if (window.vnpay) {
+                            vnpay.open({width: 768, height: 600, url: x.data});
+                        }
+                        else {
+                            location.href = x.data;
+                        }
+                        return false;
+                    } else {
+                        alert(x.Message);
+                    }
+                },
+                error: function(xhr, status, message) {}
+            });
+            e.stopImmediatePropagation()
+            return false;
+        });
+    </script>
+{% endblock %}
