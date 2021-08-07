@@ -7,6 +7,7 @@
             <div class="content-frame">
                 <div class="user-info">
                     <div>Xin chào: <span v-if="user.ufullname || user.ufullname==''" v-once class="name">[[ user.ufullname ]]</span></div>
+                    <div>Xu: <span v-if="user.ucoin" v-once class="name">[[ user.ucoin ]]</span></div>
                     <div v-if="user.uimage" v-bind:style='{ backgroundImage: "url(" + user.uimage + ")"}' class="user-image"></div>
                 </div>
                 <div class="side-nav">

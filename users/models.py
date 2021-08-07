@@ -1,4 +1,3 @@
-from re import T
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.fields.related import ManyToManyField
@@ -61,7 +60,6 @@ class UserManager(BaseUserManager):
         )
         return user
 
-
 class User(AbstractBaseUser):
     username = models.CharField(max_length=255,unique=True,verbose_name='username')
     fullname = models.CharField(max_length=255)
@@ -79,6 +77,7 @@ class User(AbstractBaseUser):
     active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
+    coin = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=0)
 
     # notice the absence of a "Password field", that is built in.
 
@@ -117,3 +116,9 @@ class User(AbstractBaseUser):
     def is_admin(self):
         "Is the user a admin member?"
         return self.admin
+
+class BillPay(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, default=10000)
+    status = models.IntegerField(default=0,blank= True)

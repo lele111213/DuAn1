@@ -1,0 +1,26 @@
+{% extends "VnPay/base_layout.html" %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ title }}: {{ result }}</div>
+        <div class="panel-body">
+            <p>requestId: {{ requestId }}</p>
+            <p>orderId: {{ orderId }}</p>
+            <p>amount: {{ amount }}</p>
+            <p>orderInfo: {{ orderInfo }}</p>
+            <p>transId: {{ transId }}</p>
+            <p>responseTime: {{ responseTime }}</p>
+            <p>message: {{ message }}</p>
+            <p>localMessage: {{ localMessage }}</p>
+            <p>errorCode: {{ errorCode }}</p>
+            {% if errorCode != 0 %}
+                <p style="color: red"><strong>message: {{ message }}</strong></p>
+                <p style="color: red"><strong>localMessage: {{ localMessage }}</strong></p>
+                <p style="color: red"><strong>errorCode: {{ errorCode }}</strong></p>
+            {% else %}
+                <p style="color: green"><strong>message: {{ message }}</strong></p>
+                <p style="color: green"><strong>localMessage: {{ localMessage }}</strong></p>
+                <p style="color: green"><strong>errorCode: {{ errorCode }}</strong></p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

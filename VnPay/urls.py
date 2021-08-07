@@ -19,8 +19,11 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('payment/', views.payment, name='payment'),
+    path('momo_payment/', views.momo_payment, name='momo_payment'),
     path('payment_ipn/', views.payment_ipn, name='payment_ipn'),
+    path('momo_payment_ipn/', views.momo_payment_ipn, name='momo_payment_ipn'),
     path('payment_return/', views.payment_return, name='payment_return'),
+    path('momo_payment_return/', views.momo_payment_return, name='momo_payment_return'),
     path('query/', views.query, name='query'),
     path('refund/', views.refund, name='refund'),
 ]

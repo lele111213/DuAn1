@@ -156,6 +156,10 @@ VNPAY_HASH_SECRET_KEY = 'RWAYPFWOVUIWHKJZLEATNLLWWBESNRJH'  # Secret key for cre
 # TAI KHOAN TEST
 # Ngân hàng: NCB
 # Số thẻ: 9704198526191432198
-# Tên chủ thẻ:NGUYEN VAN A
-# Ngày phát hành:07/15
-# Mật khẩu OTP:123456
+# Tên chủ thẻ: NGUYEN VAN A
+# Ngày phát hành: 07/15
+# Mật khẩu OTP: 123456
+
+# MOMO CONFIG
+MOMO_RETURN_URL = 'http://localhost:8000/vnpay/momo_payment_return'
+MOMO_IPN_URL = 'https://nhaibauxx.pythonanywhere.com/vnpay/momo_payment_ipn/'

@@ -90,7 +90,8 @@ def get_user_info(request):
                 'uage': user.age,
                 'uheight': user.height,
                 'uhobbies': user.hobbies,
-                'uimage': user.image.url
+                'uimage': user.image.url,
+                'ucoin': user.coin
             },
             'status': True,
             'message': ''
@@ -194,3 +195,4 @@ def room(request, room_id):
     return HttpResponseNotAllowed('405 ERROR')
     
         
+# MOMO PAY

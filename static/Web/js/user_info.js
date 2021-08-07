@@ -194,6 +194,7 @@ var userInfoTemplate = {
                     this.user = response.data.user
                     this.$root.user['uimage'] = this.user.uimage
                     this.$root.user['ufullname'] = this.user.ufullname
+                    this.$root.user['ucoin'] = this.user.ucoin
                 }else{
                     this.errored = true
                     this.message = response.data.message
@@ -325,7 +326,8 @@ new Vue({
     data: {
         user: {
             'ufullname': null,
-            'uimage': null
+            'uimage': null,
+            'ucoin': null,
         },
         loadUserInfo: false,
         loadUserLichSu: false,

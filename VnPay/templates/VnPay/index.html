@@ -1,15 +1,24 @@
-﻿{% extends "vnpay/base_layout.html" %}
+﻿{% extends "VnPay/base_layout.html" %}
 {% block content %}
     <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">{{ title }}</div>
+        <div class="panel-heading">{{ title }} (Bản localhost không tự động cộng xu khi thanh toán thành công.)</div>
         <div class="table-responsive">
+            <strong style="padding-left: 5px">VNPAY Demo</strong>
             <ul class="list-group">
-                <i class="list-group-item"><a href="{% url 'payment' %}">Demo Thanh toán</a></i>
+                <i class="list-group-item"><a href="{% url 'payment' %}">Demo Payment</a></i>
                 <i class="list-group-item"><a href="{% url 'query' %}">Demo Query (Kiểm tra kết quả Giao dịch tại
-                    VNPAY)</a></i>
+                    VNPAY, bản local không bị vnpay chặn chức năng này)</a></i>
                 <i class="list-group-item"><a href="{% url 'refund' %}">Demo Refund (Gửi yêu cầu hoàn tiền cho giao
                     dịch)</a></i>
+            </ul>
+            <strong style="padding-left: 5px">Momo Demo</strong>
+            <ul class="list-group">
+                <i class="list-group-item"><a href="{% url 'momo_payment' %}">Demo payment</a></i>
+            </ul>
+            <strong style="padding-left: 5px">ZaloPay Demo</strong>
+            <ul class="list-group">
+                <i class="list-group-item"><a href="{% url 'payment' %}">Demo payment</a></i>
             </ul>
         </div>
     </div>
