@@ -567,6 +567,7 @@ def zalo_payment_return(request):
 @csrf_exempt
 def mobile_momo_payment(request):
     if request.method == "POST":
+        print("-----------get request getHash from mobile app-----------")
         resp = json.loads(request.body)
         module_dir = os.path.dirname(__file__)  # get current directory
         file_path = os.path.join(module_dir, 'rsa/mykey.pem')
@@ -581,7 +582,37 @@ def mobile_momo_payment(request):
         }
         cipher = Cipher_PKCS1_v1_5.new(key)
         cipher_text = cipher.encrypt(json.dumps(rowData).encode())
-        hash = b64encode(cipher_text)
+        hash = b64encode(cipher_text).decode("utf-8")
         resp['hash'] = hash
-    print("get from mobile")
-    return JsonResponse({"status":1,"message":"thành công","hash": hash.decode("utf-8") })
+        print("-----------return: "+ hash +"-----------")
+        return JsonResponse({"status":0,"message":"thành công","hash": hash })
+    return JsonResponse({"status":1,"message":"Thất bại" })
+
+@csrf_exempt
+def app_momo_payment_ipn(request):
+    if request.method == "POST":
+        resp = json.loads(request.body)
+        print("-----------get request from mobile payment ipn-----------")
+        status = resp['status']
+        message = resp['message']
+        partnerRefId = resp['partnerRefId']
+        momoTransId = resp['momoTransId']
+        amount = resp['amount']
+        # Signature
+        serectkey = b"KDbueVZray9IZpODOLJvsx7XFDcyNmZ4"
+        rawSignature = "amount="+str(amount)+"&message="+message+"&momoTransId="+momoTransId+"&partnerRefId="+partnerRefId+"&status="+str(status)
+        rawSignature = bytes(rawSignature,'utf-8')
+        h = hmac.new( serectkey, rawSignature, hashlib.sha256 )
+        signature = h.hexdigest()
+
+        data = {
+            'status' : status,
+            'message' : message,
+            'partnerRefId' : partnerRefId,
+            'momoTransId' : momoTransId,
+            'amount' : amount,
+            'signature' : signature
+        }
+        print("-----------return to momo-----------")
+        return JsonResponse(data ,status=200, content_type='application/json;charset=UTF-8')
+    return JsonResponse({"message":"Ko có thông tin"},status=200, content_type='application/json;charset=UTF-8')
